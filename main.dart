@@ -40,6 +40,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         _expression = '';
       } else if (value == '=') {
         _result = _evaluateExpression(_expression);
+      } else if (value == '^2') {
+        _expression += '^2';
+        _display += '²';
       } else {
         _expression += value;
         _display += value;
@@ -49,6 +52,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   String _evaluateExpression(String expression) {
     try {
+      // Replace the custom square notation with the actual mathematical operation
+      expression = expression.replaceAllMapped(RegExp(r'(\d+)\^2'), (match) {
+        final number = match.group(1);
+        return '($number * $number)';
+      });
+
       const evaluator = ExpressionEvaluator();
       final parsedExpression = Expression.parse(expression);
       final result = evaluator.eval(parsedExpression, {});
@@ -92,6 +101,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           _buildButtonRow(['4', '5', '6', '*']),
           _buildButtonRow(['1', '2', '3', '-']),
           _buildButtonRow(['C', '0', '=', '+']),
+          _buildButtonRow(['^2']), // Add the new button row for squaring
         ],
       ),
     );
